@@ -23,7 +23,7 @@ jobs:
       - name: Read the run MLflow recorded, and assert on it
         run: |
           U=$(databricks current-user me -o json | jq -r .userName)
-          EXP=$(databricks experiments get-by-name "sudsuay_titanic_xgb" -o json \
+          EXP=$(databricks experiments get-by-name "/Shared/sudsuay_titanic_xgb" -o json \
                 | jq -r .experiment.experiment_id)
           echo "experiment $EXP"
 

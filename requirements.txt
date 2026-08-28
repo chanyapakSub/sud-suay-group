@@ -1,0 +1,3 @@
+# sud-suay-group dependencies
+# (pandas, numpy, matplotlib, scikit-learn, mlflow, pyspark pre-installed on DBR 15.4)
+xgboost

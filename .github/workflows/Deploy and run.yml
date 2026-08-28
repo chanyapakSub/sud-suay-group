@@ -26,11 +26,3 @@ jobs:
       - name: Run the deployed job
         run: databricks bundle run sample_job -t dev
         
-  notification:
-      if: always()
-      uses: ./.github/workflows/Reusable Notification.yml
-      secrets: inherit
-      with:
-        message: |
-          DS... งานเสร็จแล้วว้อยยย
-          Message: ${{ github.event.head_commit.message }}

@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy
+        run: |
+          echo "Test Notifications..."
+
+  notification:
+    needs:
+      - deploy
+
+    if: always()
+    uses: ./.github/workflows/Reusable Notification.yml
+    secrets: inherit
+    with:
+      message: |
+        Deployment finished
+        Status: ${{ needs.deploy.result }}
+        Repository: ${{ github.repository }}
+        Branch: ${{ github.ref_name }}

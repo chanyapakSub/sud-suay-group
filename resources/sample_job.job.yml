@@ -23,21 +23,21 @@ resources:
       
 
       tasks:
-        - task_key: 01_check_data
+        - task_key: 01_load_titanic_to_spark
           notebook_task:
-            notebook_path: ${var.rootpath_notebook}/01_check_data
+            notebook_path: ${var.rootpath_notebook}/01_load_titanic_to_spark
           existing_cluster_id: 0318-031919-b3fa4xtr
-        - task_key: 02_preprocess_rfm
+        - task_key: 02_prep_eda
           notebook_task:
-            notebook_path: ${var.rootpath_notebook}/02_preprocess_rfm
+            notebook_path: ${var.rootpath_notebook}/02_prep_eda
           depends_on:
-            - task_key: 01_check_data
+            - task_key: 01_load_titanic_to_spark
           existing_cluster_id: 0318-031919-b3fa4xtr
-        - task_key: 03_write_rfm_table
+        - task_key: 03_train_evaluate_mlflow
           notebook_task:
-            notebook_path: ${var.rootpath_notebook}/03_write_rfm_table
+            notebook_path: ${var.rootpath_notebook}/03_train_evaluate_mlflow
           depends_on:
-            - task_key: 02_preprocess_rfm
+            - task_key: 02_prep_eda
           existing_cluster_id: 0318-031919-b3fa4xtr
 
       job_clusters:

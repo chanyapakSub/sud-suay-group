@@ -16,7 +16,7 @@ variables:
   schema:
     description: The schema to use
   rootpath_notebook: 
-    default:  /Workspace/Users/santitham.pro@kmutt.ac.th/.bundle/${bundle.name}/${bundle.target}/files/src
+    default:  /Workspace/Users/chayapaw@ais.co.th/.bundle/${bundle.name}/${bundle.target}/files/src
 
 targets:
   dev:
@@ -50,7 +50,7 @@ targets:
     workspace:
       host: https://adb-1502583690645883.3.azuredatabricks.net
       # We explicitly deploy to /Workspace/Users/santitham.pro@kmutt.ac.th to make sure we only have a single copy.
-      root_path: /Workspace/Users/santitham.pro@kmutt.ac.th/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Workspace/Users/chayapaw@ais.co.th/.bundle/${bundle.name}/${bundle.target}
     variables:
       catalog: ctl_training_dev
       schema: m3

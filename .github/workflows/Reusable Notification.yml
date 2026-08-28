@@ -1,0 +1,86 @@
+name: Reusable Notification
+
+on:
+  workflow_call:
+    inputs:
+      message:
+        description: "Notification message"
+        required: true
+        type: string
+
+      button_title:
+        description: "Button title"
+        required: false
+        type: string
+        default: "Open GitHub"
+
+      button_url:
+        description: "Button URL"
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  notify:
+    name: Send Notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification
+        shell: bash
+        env:
+          WEBHOOK_URL: ${{ secrets.MS_HOOK }}
+          MESSAGE: ${{ inputs.message }}
+          BUTTON_TITLE: ${{ inputs.button_title }}
+          BUTTON_URL: ${{ inputs.button_url }}
+          CHAT_ID: "19:2e89541cfa384101abc8fb97403634f6@thread.v2"
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          ACTOR: ${{ github.actor }}
+          SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          SERVER_URL: ${{ github.server_url }}
+        run: |
+          set -euo pipefail
+          # ถ้า caller ไม่ส่ง button_url มา
+          # ให้เปิด GitHub Actions run ปัจจุบันโดยอัตโนมัติ
+          if [ -z "$BUTTON_URL" ]; then
+            BUTTON_URL="${SERVER_URL}/${REPOSITORY}/actions/runs/${RUN_ID}"
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg message "$MESSAGE" \
+            --arg buttonTitle "$BUTTON_TITLE" \
+            --arg buttonUrl "$BUTTON_URL" \
+            --arg chatID "$CHAT_ID" \
+            '{
+              attachments: [
+                {
+                  contentType: "application/vnd.microsoft.card.adaptive",
+                  content: {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    type: "AdaptiveCard",
+                    version: "1.5",
+                    body: [
+                      {
+                        type: "TextBlock",
+                        text: $message,
+                        wrap: true
+                      }
+                    ],
+                    actions: [
+                      {
+                        type: "Action.OpenUrl",
+                        title: $buttonTitle,
+                        url: $buttonUrl
+                      }
+                    ]
+                  }
+                }
+              ],
+              type: "message",
+              chatID: $chatID
+            }')
+          curl --fail-with-body \
+            --location "$WEBHOOK_URL" \
+            --header "Content-Type: application/json" \
+            --data-raw "$PAYLOAD"

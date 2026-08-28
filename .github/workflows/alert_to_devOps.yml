@@ -1,0 +1,19 @@
+name: update_devOps_check
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**/*.md"]
+  workflow_dispatch:
+
+jobs:
+  notification:
+    if: always()
+    uses: ./.github/workflows/Reusable Notification.yml
+    secrets: inherit
+    with:
+      message: |
+        Dev Ops ทำงานหน่อยว้อยยย..!!!
+        Status: ${{ needs.deploy.result }}
+        Repository: ${{ github.repository }}
+        Branch: ${{ github.ref_name }}

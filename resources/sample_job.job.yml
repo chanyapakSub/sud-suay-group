@@ -1,0 +1,51 @@
+# A sample job for sudsuay_group.
+
+resources:
+  jobs:
+    sample_job:
+      name: sud_suay_groups_final_v1
+
+      trigger:
+        # Run this job every day, exactly one day from the last run; see https://docs.databricks.com/api/workspace/jobs/create#trigger
+        periodic:
+          interval: 1
+          unit: DAYS
+
+      #email_notifications:
+      #  on_failure:
+      #    - your_email@example.com
+
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: schema
+          default: ${var.schema}
+      
+
+      tasks:
+        - task_key: 01_check_data
+          notebook_task:
+            notebook_path: ${var.rootpath_notebook}/01_check_data
+          existing_cluster_id: 0318-031919-b3fa4xtr
+        - task_key: 02_preprocess_rfm
+          notebook_task:
+            notebook_path: ${var.rootpath_notebook}/02_preprocess_rfm
+          depends_on:
+            - task_key: 01_check_data
+          existing_cluster_id: 0318-031919-b3fa4xtr
+        - task_key: 03_write_rfm_table
+          notebook_task:
+            notebook_path: ${var.rootpath_notebook}/03_write_rfm_table
+          depends_on:
+            - task_key: 02_preprocess_rfm
+          existing_cluster_id: 0318-031919-b3fa4xtr
+
+      job_clusters:
+        - job_cluster_key: job_cluster
+          new_cluster:
+            spark_version: 16.4.x-scala2.12
+            node_type_id: Standard_D3_v2
+            data_security_mode: DATA_SECURITY_MODE_AUTO
+            autoscale:
+              min_workers: 1
+              max_workers: 4
